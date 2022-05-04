@@ -1,8 +1,8 @@
 import { observe } from '@/assets/js/observe'
-
+import Dep from './Dep'
 export default function defineReactive (data, key, val) {
-  console.log('我是defineReactive', key)
-
+  const  dep = new Dep()
+  // console.log('我是defineReactive', key)
   if (arguments.length == 2) {
     val = data[key]
   }
@@ -11,7 +11,14 @@ export default function defineReactive (data, key, val) {
     enumerable: true,
     configurable: true,
     get () {
-      console.log('正在访问obj的' + key + '属性')
+
+      console.log('正在访问obj的' + key + '属性');
+ if(Dep.target){
+   dep.depend()
+   if(childOb){
+     childOb.dep.depend()
+   }
+ }
       return val
     },
     set (newValue) {
@@ -19,6 +26,7 @@ export default function defineReactive (data, key, val) {
       if (val === newValue) return
       val = newValue
       childOb = observe(val)
+      dep.notify()
     }
 
   })
